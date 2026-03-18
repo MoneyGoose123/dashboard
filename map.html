@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NAKAMURA DAISUKE — Life Map</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07090f;
+      --surface: #0d1117;
+      --surface2: #111827;
+      --border: #1e2d47;
+      --gold: #f59e0b;
+      --gold-dim: #78450a;
+      --cyan: #22d3ee;
+      --cyan-dim: #0e5a6b;
+      --purple: #a78bfa;
+      --green: #34d399;
+      --red: #f87171;
+      --orange: #fb923c;
+      --text: #e2e8f0;
+      --muted: #64748b;
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 0 0 6rem;
+      background-image:
+        radial-gradient(ellipse 100% 40% at 50% -10%, rgba(245, 158, 11, 0.07), transparent),
+        radial-gradient(ellipse 60% 40% at 90% 60%, rgba(34, 211, 238, 0.04), transparent),
+        radial-gradient(ellipse 50% 30% at 10% 80%, rgba(167, 139, 250, 0.04), transparent);
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 9, 15, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    nav .logo {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    nav .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    nav .nav-links a {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav .nav-links a:hover { color: var(--text); }
+
+    nav .back-link {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      transition: color 0.2s;
+    }
+    nav .back-link:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 .highlight { color: var(--gold); }
+
+    .philosophy-box {
+      background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(34,211,238,0.05));
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      margin-top: 2rem;
+      text-align: left;
+    }
+
+    .philosophy-box .phil-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    .philosophy-box p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: var(--text);
+    }
+
+    .philosophy-box .keyword {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* ── SECTION ── */
+    .section {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 3rem 2rem 0;
+    }
+
+    .section-heading {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-heading::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── ECOSYSTEM CARDS ── */
+    .eco-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .eco-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .eco-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 14px 14px 0 0;
+    }
+
+    .eco-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+    }
+
+    /* color variants */
+    .c-gold::before { background: var(--gold); }
+    .c-gold:hover { border-color: rgba(245,158,11,0.4); }
+
+    .c-cyan::before { background: var(--cyan); }
+    .c-cyan:hover { border-color: rgba(34,211,238,0.4); }
+
+    .c-purple::before { background: var(--purple); }
+    .c-purple:hover { border-color: rgba(167,139,250,0.4); }
+
+    .c-green::before { background: var(--green); }
+    .c-green:hover { border-color: rgba(52,211,153,0.4); }
+
+    .c-orange::before { background: var(--orange); }
+    .c-orange:hover { border-color: rgba(251,146,60,0.4); }
+
+    .c-red::before { background: var(--red); }
+    .c-red:hover { border-color: rgba(248,113,113,0.4); }
+
+    .eco-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .eco-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .eco-card .eco-sub {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .eco-card p {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: #94a3b8;
+    }
+
+    .eco-tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+
+    .eco-tag {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* ── CONNECTION MAP ── */
+    .connection-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+    }
+
+    .connection-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .connection-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: var(--surface2);
+      border-radius: 10px;
+    }
+
+    .connection-arrow {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .connection-item p {
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: #94a3b8;
+    }
+
+    .connection-item p strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ── ADVENTURE TIMELINE ── */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0.4rem;
+      top: 0.5rem;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--gold), var(--cyan), var(--purple));
+      border-radius: 2px;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 1.75rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -1.65rem;
+      top: 0.45rem;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--gold);
+    }
+
+    .timeline-item.future::before { border-color: var(--cyan); }
+    .timeline-item.present::before {
+      border-color: var(--green);
+      box-shadow: 0 0 8px rgba(52,211,153,0.6);
+    }
+
+    .timeline-date {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .timeline-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline-desc {
+      font-size: 0.82rem;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    /* ── STAND.FM ── */
+    .fm-hero {
+      background: linear-gradient(135deg, rgba(34,211,238,0.08), rgba(167,139,250,0.06));
+      border: 1px solid rgba(34,211,238,0.2);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .fm-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(34,211,238,0.12);
+      border: 1px solid rgba(34,211,238,0.3);
+      color: var(--cyan);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      margin-bottom: 1.25rem;
+    }
+
+    .fm-hero h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .fm-hero .fm-tagline {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin-bottom: 1.5rem;
+    }
+
+    .fm-concept {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .fm-names-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .fm-name-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      cursor: default;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+
+    .fm-name-card:hover {
+      border-color: var(--cyan-dim);
+      transform: translateY(-2px);
+    }
+
+    .fm-name-card .name-jp {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 0.3rem;
+    }
+
+    .fm-name-card .name-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .pillar-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .pillar-card .pillar-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    .pillar-card .pillar-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+      line-height: 1.3;
+    }
+    .pillar-card .pillar-desc { font-size: 0.68rem; color: var(--muted); line-height: 1.4; }
+
+    .episodes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .episode-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.9rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: border-color 0.2s;
+    }
+
+    .episode-item:hover { border-color: var(--border); }
+
+    .ep-num {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--muted);
+      min-width: 1.8rem;
+      margin-top: 0.1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .ep-content .ep-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.15rem;
+    }
+
+    .ep-content .ep-hook {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .format-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+
+    .format-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    .format-card .f-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .format-card .f-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .format-card .f-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1000px) {
+      .eco-grid { grid-template-columns: repeat(2, 1fr); }
+      .pillars-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .eco-grid { grid-template-columns: 1fr; }
+      .fm-names-grid { grid-template-columns: 1fr; }
+      .connection-grid { grid-template-columns: 1fr; }
+      .episodes-grid { grid-template-columns: 1fr; }
+      .format-row { grid-template-columns: repeat(2, 1fr); }
+      .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── UTIL ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <span class="logo">NAKAMURA DAISUKE</span>
+  <ul class="nav-links">
+    <li><a href="#ecosystem">エコシステム</a></li>
+    <li><a href="#connections">つながり</a></li>
+    <li><a href="#adventures">アドベンチャー</a></li>
+    <li><a href="#standfm">stand.fm</a></li>
+  </ul>
+  <a class="back-link" href="index.html">← Dashboard</a>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <p class="hero-eyebrow">Life Map — 2026</p>
+  <h1>プライベートとビジネスの<br><span class="highlight">境界線をなくす</span>生き方</h1>
+
+  <div class="philosophy-box">
+    <div class="phil-label">Core Philosophy</div>
+    <p>
+      人生において、<span class="keyword">プライベートとビジネスを切り分けない</span>。<br>
+      一貫して楽しい人生を送りながら、同じような生き方ができる<span class="keyword">仲間（コミュニティ）</span>を増やす。<br>
+      収益はそのための手段。eBayで経済的自由を手にした人が「明日から沖縄行きますか」と<br>
+      即答できる――そういう<span class="keyword">フットワーク軽い仲間</span>がたくさんいる世界を作る。
+    </p>
+  </div>
+</div>
+
+<!-- ── ECOSYSTEM ── -->
+<div class="section" id="ecosystem">
+  <div class="section-heading">Life Ecosystem — 事業・活動マップ</div>
+
+  <div class="eco-grid">
+
+    <!-- eBay -->
+    <div class="eco-card c-gold">
+      <span class="eco-icon">🌐</span>
+      <h3>eBay 海外販売</h3>
+      <div class="eco-sub">メイン収益エンジン</div>
+      <p>国内メルカリ・ヤフオク・Amazonの商品をeBayで無在庫出品。利益を稼ぎながら、同じ手法を教えコミュニティへ展開。</p>
+      <div class="eco-tag-list">
+        <span class="eco-tag">無在庫転売</span>
+        <span class="eco-tag">海外販売</span>
+        <span class="eco-tag">スケーラブル</span>
+        <span class="eco-tag">教育事業</span>
+      </div>
+    </div>
+
+    <!-- Eagle -->
+    <div class="eco-card c-cyan">
+      <span class="eco-icon">🦅</span>
+      <h3>Eagle System</h3>
+      <div class="eco-sub">自社開発 自動化システム</div>
+      <p>メルカリ・ヤフオク・Amazonの在庫を自動監視し、eBayへ無在庫出品。仕入れ元の在庫切れを検知したら出品を自動取り下げ。属人性をなくし、仕組みで稼ぐ。</p>
+      <div class="eco-tag-list">
+        <span class="eco-tag">在庫監視</span>
+        <span class="eco-tag">自動出品/取下げ</span>
+        <span class="eco-tag">スケール</span>
+        <span class="eco-tag">競合優位性</span>
+      </div>
+    </div>
+
+    <!-- Community -->
+    <div class="eco-card c-green">
+      <span class="eco-icon">🤝</span>
+      <h3>コミュニティ</h3>
+      <div class="eco-sub">仲間・弟子・卒業生</div>
+      <p>eBayで稼げるようになった卒業生・現役メンバーがフットワーク軽く動ける仲間に。「明日沖縄行く？」に「行きます」と言える人たちのネットワーク。</p>
+      <div class="eco-tag-list">
+        <span class="eco-tag">経済的自由</span>
+        <span class="eco-tag">フットワーク</span>
+        <span class="eco-tag">仲間</span>
+        <span class="eco-tag">コレクティブ</span>
+      </div>
+    </div>
+
+    <!-- Triton -->
+    <div class="eco-card c-purple">
+      <span class="eco-icon">⚓</span>
+      <h3>Triton Project</h3>
+      <div class="eco-sub">自立型拠点・民泊事業</div>
+      <p>Tritonを活用した民泊事業を核に、狩猟・ジビエ料理・アウトドア体験など「リアルな場」を作る。コミュニティの集いの拠点にもなる。</p>
+      <div class="eco-tag-list">
+        <span class="eco-tag">民泊</span>
+        <span class="eco-tag">狩猟・ジビエ</span>
+        <span class="eco-tag">体験提供</span>
+        <span class="eco-tag">拠点</span>
+      </div>
+    </div>
+
+    <!-- 出張寿司 -->
+    <div class="eco-card c-orange">
+      <span class="eco-icon">🍣</span>
+      <h3>出張寿司</h3>
+      <div class="eco-sub">寿司職人 × 体験型サービス</div>
+      <p>寿司職人の技術を活かした出張・ケータリング寿司。高単価・体験価値の高いサービスで、コミュニティメンバーへのギフトやイベントにも活用。</p>
+      <div class="eco-tag-list">
+        <span class="eco-tag">職人技術</span>
+        <span class="eco-tag">高単価</span>
+        <span class="eco-tag">体験価値</span>
+        <span class="eco-tag">ブランド</span>
+      </div>
+    </div>
+
+    <!-- Adventures -->
+    <div class="eco-card c-red">
+      <span class="eco-icon">🗺️</span>
+      <h3>アドベンチャー</h3>
+      <div class="eco-sub">体験がコンテンツになる</div>
+      <p>WBC観戦@マイアミ、マグロ釣り、キリマンジャロ登頂（2025.6予定）など。「こんな人生できるよ」をリアルに体現し、コンテンツ・ブランドになる。</p>
+      <div class="eco-tag-list">
+        <span class="eco-tag">WBC@マイアミ</span>
+        <span class="eco-tag">マグロ釣り</span>
+        <span class="eco-tag">キリマンジャロ</span>
+        <span class="eco-tag">体験</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── CONNECTIONS ── -->
+<div class="section" id="connections">
+  <div class="section-heading">How It All Connects — つながりの構造</div>
+
+  <div class="connection-box">
+    <div class="connection-grid">
+
+      <div class="connection-item">
+        <span class="connection-arrow">⚡</span>
+        <p><strong>Eagle → eBay の自動化</strong><br>Eagleが在庫監視・出品管理を自動化することで、人手をかけずスケールできる。時間と場所の自由が生まれる。</p>
+      </div>
+
+      <div class="connection-item">
+        <span class="connection-arrow">🔄</span>
+        <p><strong>eBay収益 → 経済的自由 → フットワーク</strong><br>稼げるようになったメンバーが「明日から行ける」人間になる。自由な人間が集まるコミュニティが形成される。</p>
+      </div>
+
+      <div class="connection-item">
+        <span class="connection-arrow">🏕️</span>
+        <p><strong>Triton → コミュニティの拠点</strong><br>民泊拠点はただの宿泊施設ではなく、仲間が集まりリアルでつながれる場所。ジビエ・アウトドア体験がコンテンツにもなる。</p>
+      </div>
+
+      <div class="connection-item">
+        <span class="connection-arrow">🍣</span>
+        <p><strong>出張寿司 × コミュニティイベント</strong><br>寿司の技術がコミュニティのイベント・会食に使われる。プライベートな技術がビジネスの場で輝く、境界線のない使われ方。</p>
+      </div>
+
+      <div class="connection-item">
+        <span class="connection-arrow">📻</span>
+        <p><strong>アドベンチャー → コンテンツ → stand.fm</strong><br>WBC・キリマンジャロ・マグロ釣りなどの体験が、ラジオのリアルコンテンツになる。「こんな生き方できるよ」を証明し続ける。</p>
+      </div>
+
+      <div class="connection-item">
+        <span class="connection-arrow">🌀</span>
+        <p><strong>stand.fm → 新しい仲間</strong><br>ラジオを通じて「この人みたいな生き方したい」と感じた人がコミュニティへ。コンテンツが最強の集客になる。</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── ADVENTURES ── -->
+<div class="section" id="adventures">
+  <div class="section-heading">Adventure Timeline — 人生のハイライト</div>
+
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="timeline-date">2022〜2024</div>
+      <div class="timeline-title">eBay海外販売・Eagle開発</div>
+      <div class="timeline-desc">無在庫転売システムを構築し、収益化と自動化を実現。コミュニティを育て始める。</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">過去</div>
+      <div class="timeline-title">🍣 寿司職人として修行・経験</div>
+      <div class="timeline-desc">寿司職人としてのキャリアが、出張寿司という唯一無二のブランドの基盤になる。</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">過去</div>
+      <div class="timeline-title">🐟 マグロ釣り</div>
+      <div class="timeline-desc">趣味のフィッシング。ビジネスとは切り離せないプライベートな情熱がブランドを彩る。</div>
+    </div>
+
+    <div class="timeline-item present">
+      <div class="timeline-date">2026年3月 — 現在</div>
+      <div class="timeline-title">⚾ WBC観戦 @ マイアミ — ベネズエラ優勝</div>
+      <div class="timeline-desc">マイアミへ飛んでWBCを現地観戦。フットワーク軽い生き方を体現。ベネズエラ優勝の瞬間を目撃。</div>
+    </div>
+
+    <div class="timeline-item present">
+      <div class="timeline-date">2026年 進行中</div>
+      <div class="timeline-title">⚓ Triton Project 始動</div>
+      <div class="timeline-desc">Triton民泊事業の立ち上げ。コミュニティ拠点の構築を進行中。</div>
+    </div>
+
+    <div class="timeline-item future">
+      <div class="timeline-date">2025年6月 — 予定</div>
+      <div class="timeline-title">🏔️ キリマンジャロ登頂</div>
+      <div class="timeline-desc">アフリカ最高峰5,895mへの挑戦。体験をリアルタイムでラジオコンテンツにできる。</div>
+    </div>
+
+    <div class="timeline-item future">
+      <div class="timeline-date">これから</div>
+      <div class="timeline-title">📻 stand.fm ラジオ 開始</div>
+      <div class="timeline-desc">すべての体験・思考・哲学をコンテンツに変える。仲間を増やす最強の発信。</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── STAND.FM ── -->
+<div class="section" id="standfm">
+  <div class="section-heading">stand.fm — 番組コンセプト設計</div>
+
+  <!-- Hero concept -->
+  <div class="fm-hero">
+    <div class="fm-badge">🎙️ New Show</div>
+    <h2>番組名の候補</h2>
+    <p class="fm-tagline">ブランドの核となる名前。以下から選ぶか、組み合わせてください。</p>
+    <div class="fm-concept">
+      <strong>コンセプト一行：</strong><br>
+      「プライベートとビジネスの境界線を壊した男が、フットワーク軽い人生の作り方をリアルに話す」
+    </div>
+  </div>
+
+  <!-- Show names -->
+  <div class="fm-names-grid">
+
+    <div class="fm-name-card">
+      <div class="name-jp">フットワーク</div>
+      <div class="name-desc">シンプルで強い。「フットワーク軽く生きる人のためのラジオ」というサブタイトルを添えると世界観が伝わる。</div>
+    </div>
+
+    <div class="fm-name-card">
+      <div class="name-jp">ボーダーレス</div>
+      <div class="name-desc">ビジネス・プライベート・国境・常識の「境界線をなくす」思想を一言に集約。英語混じりでスタイリッシュ。</div>
+    </div>
+
+    <div class="fm-name-card">
+      <div class="name-jp">遊んで、稼ぐ。</div>
+      <div class="name-desc">一番わかりやすく刺さるコピー。読んだ瞬間に「こういう人が聴くやつだ」とわかる。</div>
+    </div>
+
+    <div class="fm-name-card">
+      <div class="name-jp">MoneyGoose Radio</div>
+      <div class="name-desc">すでに使っているGitHubユーザー名をブランドに。一貫性があり、ファンが覚えやすい。</div>
+    </div>
+
+    <div class="fm-name-card">
+      <div class="name-jp">中村大祐のリアル</div>
+      <div class="name-desc">シンプルに自分の名前で勝負。「リアル」という言葉が飾らない本音のイメージを作る。</div>
+    </div>
+
+    <div class="fm-name-card">
+      <div class="name-jp">TRITON RADIO</div>
+      <div class="name-desc">プロジェクト名をそのままブランドに。ストーリーの積み上げとともにブランド価値が上がっていく。</div>
+    </div>
+
+  </div>
+
+  <!-- Format -->
+  <div class="section-heading" style="margin-top:2rem;">放送フォーマット</div>
+  <div class="format-row" style="margin-bottom:2rem;">
+    <div class="format-card">
+      <div class="f-label">放送時間</div>
+      <div class="f-value">10〜20分</div>
+      <div class="f-sub">聴きながら作業できる長さ</div>
+    </div>
+    <div class="format-card">
+      <div class="f-label">頻度</div>
+      <div class="f-value">週2〜3回</div>
+      <div class="f-sub">ゆるく続けることが大事</div>
+    </div>
+    <div class="format-card">
+      <div class="f-label">スタイル</div>
+      <div class="f-value">トーク一本</div>
+      <div class="f-sub">台本なし、思ったことをそのまま</div>
+    </div>
+    <div class="format-card">
+      <div class="f-label">目的</div>
+      <div class="f-value">仲間を増やす</div>
+      <div class="f-sub">集客より共感・信頼構築</div>
+    </div>
+  </div>
+
+  <!-- Pillars -->
+  <div class="section-heading">コンテンツの5本柱</div>
+  <div class="pillars-grid" style="margin-bottom:2rem;">
+
+    <div class="pillar-card">
+      <div class="pillar-icon">🌐</div>
+      <div class="pillar-title">eBay・海外販売</div>
+      <div class="pillar-desc">実際の収益・失敗・仕組みをリアルに</div>
+    </div>
+
+    <div class="pillar-card">
+      <div class="pillar-icon">🗺️</div>
+      <div class="pillar-title">冒険・体験談</div>
+      <div class="pillar-desc">WBC・キリマンジャロ・マグロ釣り</div>
+    </div>
+
+    <div class="pillar-card">
+      <div class="pillar-icon">⚙️</div>
+      <div class="pillar-title">事業の裏側</div>
+      <div class="pillar-desc">Eagle・Triton・出張寿司の舞台裏</div>
+    </div>
+
+    <div class="pillar-card">
+      <div class="pillar-icon">🤝</div>
+      <div class="pillar-title">コミュニティ</div>
+      <div class="pillar-desc">仲間の話・対談・卒業生エピソード</div>
+    </div>
+
+    <div class="pillar-card">
+      <div class="pillar-icon">🧠</div>
+      <div class="pillar-title">人生哲学</div>
+      <div class="pillar-desc">お金・自由・楽しさの考え方</div>
+    </div>
+
+  </div>
+
+  <!-- Episodes -->
+  <div class="section-heading">最初の10エピソード案</div>
+  <div class="episodes-grid">
+
+    <div class="episode-item">
+      <div class="ep-num">#01</div>
+      <div class="ep-content">
+        <div class="ep-title">中村大祐って何者？</div>
+        <div class="ep-hook">寿司職人がなぜeBayを始めて、マイアミでWBCを観ているのか。全部つながってる話。</div>
+      </div>
+    </div>
+
+    <div class="episode-item">
+      <div class="ep-num">#02</div>
+      <div class="ep-content">
+        <div class="ep-title">eBayで人生が変わった話</div>
+        <div class="ep-hook">最初の一品が売れた瞬間から、「明日から沖縄」を言えるようになるまで。</div>
+      </div>
+    </div>
+
+    <div class="episode-item">
+      <div class="ep-num">#03</div>
+      <div class="ep-content">
+        <div class="ep-title">マイアミでWBCを観てきた</div>
+        <div class="ep-hook">なぜ行けるのか。フットワーク軽い人間になるために必要なことをリアルに。</div>
+      </div>
+    </div>
+
+    <div class="episode-item">
+      <div class="ep-num">#04</div>
+      <div class="ep-content">
+        <div class="ep-title">Eagleシステムを作った理由</div>
+        <div class="ep-hook">「仕組みがないと自由になれない」——自動化にこだわる理由と実際の仕組み。</div>
+      </div>
+    </div>
+
+    <div class="episode-item">
+      <div class="ep-num">#05</div>
+      <div class="ep-content">
+        <div class="ep-title">寿司職人がeBayをやる理由</div>
+        <div class="ep-hook">一見バラバラに見える2つのキャリアが、実は同じ哲学から来ている話。</div>
+      </div>
+    </div>
+
+    <div class="episode-item">
+      <div class="ep-num">#06</div>
+      <div class="ep-content">
+        <div class="ep-title">キリマンジャロに登る理由</div>
+        <div class="ep-hook">お金があっても「行かない」人がいる。なぜ自分は行くのかを語る。</div>
+      </div>
+    </div>
+
+    <div class="episode-item">
+      <div class="ep-num">#07</div>
+      <div class="ep-content">
+        <div class="ep-title">Tritonプロジェクトとは何か</div>
+        <div class="ep-hook">民泊・狩猟・ジビエ——「リアルな拠点」を作ろうとしている理由。</div>
+      </div>
+    </div>
+
+    <div class="episode-item">
+      <div class="ep-num">#08</div>
+      <div class="ep-content">
+        <div class="ep-title">フットワーク軽い仲間を増やしたい理由</div>
+        <div class="ep-hook">「見込み客」じゃない。一緒に遊べる仲間としてのコミュニティ論。</div>
+      </div>
+    </div>
+
+    <div class="episode-item">
+      <div class="ep-num">#09</div>
+      <div class="ep-content">
+        <div class="ep-title">マグロを釣った話</div>
+        <div class="ep-hook">趣味がそのままコンテンツになる。楽しんでいることが全部つながっている。</div>
+      </div>
+    </div>
+
+    <div class="episode-item">
+      <div class="ep-num">#10</div>
+      <div class="ep-content">
+        <div class="ep-title">僕が考える「理想の人生」</div>
+        <div class="ep-hook">ビジネスと人生を切り分けない哲学を、全部まとめて語る。</div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /.section -->
+
+</body>
+</html>
