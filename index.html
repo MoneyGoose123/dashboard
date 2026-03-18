@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NAKAMURA — Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07090f;
+      --surface: #0d1117;
+      --surface2: #131b2a;
+      --border: #1e2d47;
+      --border-glow: #2a4a7a;
+      --gold: #f59e0b;
+      --gold-dim: #92600a;
+      --cyan: #22d3ee;
+      --cyan-dim: #0e7490;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --purple: #a78bfa;
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 2rem 1.5rem 4rem;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(34, 211, 238, 0.06), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(245, 158, 11, 0.04), transparent);
+    }
+
+    /* ── HEADER ── */
+    header {
+      max-width: 1280px;
+      margin: 0 auto 2.5rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+
+    .header-left h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--text);
+    }
+
+    .header-left h1 span {
+      color: var(--gold);
+    }
+
+    .header-left .tagline {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    .header-right {
+      text-align: right;
+    }
+
+    #current-date {
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .save-indicator {
+      font-size: 0.7rem;
+      color: var(--success);
+      opacity: 0;
+      transition: opacity 0.4s;
+      margin-top: 0.3rem;
+    }
+
+    .save-indicator.show { opacity: 1; }
+
+    /* ── GRID LAYOUT ── */
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 0 24px rgba(34, 211, 238, 0.04);
+    }
+
+    .card-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-label::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    .accent-gold .card-label::before { background: var(--gold); }
+    .accent-cyan .card-label::before { background: var(--cyan); }
+    .accent-purple .card-label::before { background: var(--purple); }
+    .accent-red .card-label::before { background: var(--danger); }
+
+    /* ── FOCUS SECTION ── */
+    .focus-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .focus-card {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+
+    .focus-card h3 {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── BUSINESS SECTION ── */
+    .biz-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .biz-card .biz-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .biz-card .biz-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .badge-active { background: rgba(34, 197, 94, 0.15); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.3); }
+    .badge-building { background: rgba(245, 158, 11, 0.15); color: var(--gold); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-planning { background: rgba(167, 139, 250, 0.15); color: var(--purple); border: 1px solid rgba(167, 139, 250, 0.3); }
+
+    .biz-section-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 1rem 0 0.4rem;
+    }
+
+    .biz-section-title:first-of-type { margin-top: 0; }
+
+    /* ── EDITABLE ── */
+    [contenteditable] {
+      outline: none;
+      min-height: 1.2em;
+      border-radius: 6px;
+      padding: 0.15rem 0.3rem;
+      margin: -0.15rem -0.3rem;
+      transition: background 0.15s;
+      cursor: text;
+    }
+
+    [contenteditable]:hover {
+      background: rgba(255,255,255,0.03);
+    }
+
+    [contenteditable]:focus {
+      background: rgba(34, 211, 238, 0.05);
+      box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.2);
+    }
+
+    .edit-hint {
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .card:hover .edit-hint { opacity: 1; }
+
+    /* ── GOAL LIST ── */
+    .goal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .goal-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--surface2);
+      border-radius: 8px;
+      border-left: 3px solid var(--border);
+      transition: border-color 0.2s;
+    }
+
+    .goal-item:hover { border-left-color: var(--gold-dim); }
+
+    .goal-check {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border-glow);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .goal-check.done {
+      background: var(--success);
+      border-color: var(--success);
+    }
+
+    .goal-check.done::after {
+      content: '✓';
+      font-size: 11px;
+      color: #000;
+      font-weight: 700;
+    }
+
+    .goal-text { flex: 1; line-height: 1.5; font-size: 0.9rem; }
+
+    /* ── BRAIN DUMP ── */
+    .brain-dump {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text);
+      min-height: 120px;
+      white-space: pre-wrap;
+    }
+
+    /* ── TEXT STYLES ── */
+    .text-lg { font-size: 1rem; line-height: 1.7; }
+    .text-sm { font-size: 0.85rem; line-height: 1.7; color: var(--muted); }
+    .text-body { font-size: 0.9rem; line-height: 1.7; }
+
+    /* ── SECTION HEADING ── */
+    .section-heading {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-heading::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .biz-grid { grid-template-columns: 1fr; }
+      .focus-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+      body { padding: 1.25rem 1rem 3rem; }
+    }
+
+    /* ── QUOTE LINE ── */
+    .quote-line {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-style: italic;
+      padding: 0.5rem 1rem;
+      border-left: 2px solid var(--gold-dim);
+      margin: 0.75rem 0;
+    }
+
+    /* ── NEXT ACTION ── */
+    .next-action-wrap {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: rgba(245, 158, 11, 0.05);
+      border: 1px solid rgba(245, 158, 11, 0.15);
+      border-radius: 8px;
+    }
+
+    .next-action-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.35rem;
+    }
+
+    .next-action-text { font-size: 0.85rem; color: var(--gold); }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-left">
+    <h1>NAKAMURA <span>大祐</span></h1>
+    <p class="tagline">Personal Command Center</p>
+  </div>
+  <div class="header-right">
+    <div id="current-date"></div>
+    <div class="save-indicator" id="save-indicator">✓ Saved</div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ── FOCUS ── -->
+  <div>
+    <div class="section-heading">今週・今月のフォーカス</div>
+    <div class="focus-grid">
+
+      <div class="card accent-gold">
+        <div class="card-label">今週のフォーカス</div>
+        <div class="text-lg" contenteditable="true" data-key="focus-week">
+          今週取り組む最重要事項をここに書く
+        </div>
+        <div class="edit-hint">クリックして編集（自動保存）</div>
+      </div>
+
+      <div class="card accent-cyan">
+        <div class="card-label">今月のフォーカス</div>
+        <div class="text-lg" contenteditable="true" data-key="focus-month">
+          今月のテーマ・達成したいことをここに書く
+        </div>
+        <div class="edit-hint">クリックして編集（自動保存）</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── BUSINESS ── -->
+  <div>
+    <div class="section-heading">事業別 状況・目標</div>
+    <div class="biz-grid">
+
+      <!-- eBay -->
+      <div class="card biz-card accent-cyan">
+        <div class="biz-header">
+          <div class="biz-title">eBay 海外販売</div>
+          <span class="badge badge-active">Active</span>
+        </div>
+        <div class="card-label" style="margin-bottom:0.4rem;">現状</div>
+        <div class="text-body" contenteditable="true" data-key="ebay-status">
+          月商・出品数・利益率など現状を書く
+        </div>
+        <div class="biz-section-title">目標</div>
+        <div class="text-body" contenteditable="true" data-key="ebay-goal">
+          数値目標・達成時期を書く
+        </div>
+        <div class="next-action-wrap">
+          <div class="next-action-label">⚡ Next Action</div>
+          <div class="next-action-text" contenteditable="true" data-key="ebay-next">
+            次にやること
+          </div>
+        </div>
+      </div>
+
+      <!-- Triton Base -->
+      <div class="card biz-card accent-gold">
+        <div class="biz-header">
+          <div class="biz-title">PROJECT TRITON BASE</div>
+          <span class="badge badge-building">Building</span>
+        </div>
+        <div class="card-label" style="margin-bottom:0.4rem;">現状・進捗</div>
+        <div class="text-body" contenteditable="true" data-key="triton-status">
+          トライトン購入・黒保根物件・狩猟・民泊・ジビエ 各進捗を書く
+        </div>
+        <div class="biz-section-title">目標</div>
+        <div class="text-body" contenteditable="true" data-key="triton-goal">
+          完成形・達成時期・収益目標を書く
+        </div>
+        <div class="next-action-wrap">
+          <div class="next-action-label">⚡ Next Action</div>
+          <div class="next-action-text" contenteditable="true" data-key="triton-next">
+            次にやること
+          </div>
+        </div>
+      </div>
+
+      <!-- 出張寿司 -->
+      <div class="card biz-card accent-purple">
+        <div class="biz-header">
+          <div class="biz-title">出張寿司</div>
+          <span class="badge badge-planning">Planning</span>
+        </div>
+        <div class="card-label" style="margin-bottom:0.4rem;">現状</div>
+        <div class="text-body" contenteditable="true" data-key="sushi-status">
+          現在の受注状況・単価・稼働日数を書く
+        </div>
+        <div class="biz-section-title">目標</div>
+        <div class="text-body" contenteditable="true" data-key="sushi-goal">
+          月●件・単価●万円など数値目標を書く
+        </div>
+        <div class="next-action-wrap">
+          <div class="next-action-label">⚡ Next Action</div>
+          <div class="next-action-text" contenteditable="true" data-key="sushi-next">
+            次にやること
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PRIVATE GOALS ── -->
+  <div>
+    <div class="section-heading">プライベート目標</div>
+    <div class="card accent-gold">
+      <div class="card-label">個人の目標・大切にしていること</div>
+
+      <div class="goal-list" id="private-goals">
+
+        <div class="goal-item">
+          <div class="goal-check" onclick="toggleCheck(this)"></div>
+          <div class="goal-text text-body" contenteditable="true" data-key="priv-goal-1">
+            プライベート目標①（例：家族との時間を月●回確保する）
+          </div>
+        </div>
+
+        <div class="goal-item">
+          <div class="goal-check" onclick="toggleCheck(this)"></div>
+          <div class="goal-text text-body" contenteditable="true" data-key="priv-goal-2">
+            プライベート目標②（例：●年までに家を建てる）
+          </div>
+        </div>
+
+        <div class="goal-item">
+          <div class="goal-check" onclick="toggleCheck(this)"></div>
+          <div class="goal-text text-body" contenteditable="true" data-key="priv-goal-3">
+            プライベート目標③
+          </div>
+        </div>
+
+        <div class="goal-item">
+          <div class="goal-check" onclick="toggleCheck(this)"></div>
+          <div class="goal-text text-body" contenteditable="true" data-key="priv-goal-4">
+            プライベート目標④
+          </div>
+        </div>
+
+      </div>
+
+      <div class="edit-hint">クリックして編集（自動保存）</div>
+    </div>
+  </div>
+
+  <!-- ── BRAIN DUMP / MEMO ── -->
+  <div>
+    <div class="section-heading">思考メモ / 壁打ちノート</div>
+    <div class="card accent-cyan">
+      <div class="card-label">ブレインダンプ — 思いついたことを自由に</div>
+      <div class="brain-dump" contenteditable="true" data-key="brain-dump">
+思ったこと、アイデア、悩み、気づきなどを自由に書いてください。
+
+——
+      </div>
+      <div class="edit-hint">クリックして編集（自動保存）</div>
+    </div>
+  </div>
+
+  <!-- ── LIFE POLICY / 人生の方針 ── -->
+  <div>
+    <div class="section-heading">人生の方針 / 軸</div>
+    <div class="card accent-gold">
+      <div class="card-label">自分が大切にしている価値観・判断軸</div>
+      <div class="quote-line" contenteditable="true" data-key="life-quote">
+        座右の銘・自分に言い聞かせる言葉をここに
+      </div>
+      <div class="text-body" contenteditable="true" data-key="life-policy">
+        人生の方針・判断基準・大切にしていることを書いておくと、迷ったときに立ち返れます。
+      </div>
+      <div class="edit-hint">クリックして編集（自動保存）</div>
+    </div>
+  </div>
+
+</div><!-- /.layout -->
+
+<script>
+  // ── Date ──
+  const dateEl = document.getElementById('current-date');
+  const now = new Date();
+  const days = ['日','月','火','水','木','金','土'];
+  dateEl.textContent = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（${days[now.getDay()]}）`;
+
+  // ── Save indicator ──
+  let saveTimer;
+  const indicator = document.getElementById('save-indicator');
+
+  function showSaved() {
+    indicator.classList.add('show');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => indicator.classList.remove('show'), 2000);
+  }
+
+  // ── Load & Save ──
+  function loadAll() {
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const saved = localStorage.getItem('dashboard_' + el.dataset.key);
+      if (saved !== null) el.innerHTML = saved;
+    });
+  }
+
+  function setupAutoSave() {
+    let debounce;
+    document.querySelectorAll('[data-key]').forEach(el => {
+      el.addEventListener('input', () => {
+        clearTimeout(debounce);
+        debounce = setTimeout(() => {
+          localStorage.setItem('dashboard_' + el.dataset.key, el.innerHTML);
+          showSaved();
+        }, 600);
+      });
+    });
+  }
+
+  // ── Check boxes ──
+  function toggleCheck(el) {
+    el.classList.toggle('done');
+    // save state by goal index
+    const goals = document.querySelectorAll('.goal-check');
+    const states = Array.from(goals).map(g => g.classList.contains('done'));
+    localStorage.setItem('dashboard_goal-checks', JSON.stringify(states));
+    showSaved();
+  }
+
+  function loadChecks() {
+    const saved = localStorage.getItem('dashboard_goal-checks');
+    if (!saved) return;
+    const states = JSON.parse(saved);
+    document.querySelectorAll('.goal-check').forEach((el, i) => {
+      if (states[i]) el.classList.add('done');
+    });
+  }
+
+  // ── Init ──
+  loadAll();
+  loadChecks();
+  setupAutoSave();
+</script>
+</body>
+</html>
