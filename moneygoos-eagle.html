@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MoneyGoose × EAGLE — ビジネス全体像</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07090f;
+      --surface: #0d1117;
+      --surface2: #131b2a;
+      --border: #1e2d47;
+      --border-glow: #2a4a7a;
+      --gold: #f59e0b;
+      --gold-dim: #92600a;
+      --cyan: #22d3ee;
+      --cyan-dim: #0e7490;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --purple: #a78bfa;
+      --green: #22c55e;
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 2rem 1.5rem 4rem;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(34, 211, 238, 0.06), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(245, 158, 11, 0.04), transparent);
+    }
+
+    header {
+      max-width: 1280px;
+      margin: 0 auto 2.5rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+
+    .header-left h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--text);
+    }
+
+    .header-left h1 span { color: var(--gold); }
+
+    .header-left .tagline {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    .header-right {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.4rem;
+    }
+
+    #current-date {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .nav-link {
+      font-size: 0.72rem;
+      color: var(--cyan);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .nav-link:hover { opacity: 1; }
+
+    /* ── LAYOUT ── */
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    /* ── SECTION HEADING ── */
+    .section-heading {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-heading::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 0 24px rgba(34, 211, 238, 0.04);
+    }
+
+    .card-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-label::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    .accent-gold .card-label::before { background: var(--gold); }
+    .accent-cyan .card-label::before { background: var(--cyan); }
+    .accent-purple .card-label::before { background: var(--purple); }
+    .accent-green .card-label::before { background: var(--green); }
+
+    /* ── KPI BAR ── */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .kpi-box {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .kpi-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .kpi-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+    }
+
+    .kpi-gold { color: var(--gold); }
+    .kpi-cyan { color: var(--cyan); }
+    .kpi-green { color: var(--green); }
+    .kpi-purple { color: var(--purple); }
+
+    /* ── GRID 2-COL ── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    /* ── TABLE ── */
+    .plan-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    .plan-table th {
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .plan-table td {
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid rgba(30, 45, 71, 0.5);
+      vertical-align: middle;
+    }
+
+    .plan-table tr:last-child td { border-bottom: none; }
+
+    .plan-table tr:hover td { background: rgba(255,255,255,0.015); }
+
+    .plan-name { font-weight: 600; color: var(--text); }
+    .plan-price { color: var(--cyan); font-weight: 600; }
+    .plan-members { color: var(--gold); }
+    .plan-revenue { color: var(--green); }
+
+    .plan-total td {
+      border-top: 1px solid var(--border);
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ── BADGE ── */
+    .badge {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .badge-active { background: rgba(34, 197, 94, 0.15); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.3); }
+    .badge-free   { background: rgba(100,116,139,0.15); color: var(--muted); border: 1px solid rgba(100,116,139,0.3); }
+    .badge-top    { background: rgba(245, 158, 11, 0.15); color: var(--gold); border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    /* ── TEXT ── */
+    .text-body { font-size: 0.9rem; line-height: 1.7; }
+    .text-sm   { font-size: 0.82rem; line-height: 1.7; color: var(--muted); }
+
+    /* ── LIST ── */
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 0.25rem;
+    }
+
+    .info-item {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+
+    .info-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 0.45rem;
+    }
+
+    .dot-gold   { background: var(--gold); }
+    .dot-cyan   { background: var(--cyan); }
+    .dot-green  { background: var(--green); }
+    .dot-purple { background: var(--purple); }
+    .dot-muted  { background: var(--muted); }
+
+    /* ── PERSON CARD ── */
+    .person-card {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+
+    .person-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+
+    .person-role {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .tl-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 0.65rem 0.75rem;
+      background: var(--surface2);
+      border-radius: 8px;
+      border-left: 3px solid var(--border);
+    }
+
+    .tl-item.tl-gold { border-left-color: var(--gold-dim); }
+    .tl-item.tl-cyan { border-left-color: var(--cyan-dim); }
+
+    .tl-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+      padding-top: 0.1rem;
+      min-width: 6rem;
+    }
+
+    .tl-text { font-size: 0.875rem; line-height: 1.5; }
+
+    /* ── STRATEGY BOX ── */
+    .strategy-box {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-top: 0.75rem;
+    }
+
+    .strategy-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+
+    /* ── BOTTLENECK ── */
+    .alert-box {
+      background: rgba(239, 68, 68, 0.06);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-top: 0.75rem;
+    }
+
+    .alert-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--danger);
+      margin-bottom: 0.35rem;
+    }
+
+    .alert-text { font-size: 0.875rem; color: var(--text); }
+
+    /* ── INSIGHT BOX ── */
+    .insight-box {
+      background: rgba(245, 158, 11, 0.05);
+      border: 1px solid rgba(245, 158, 11, 0.15);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-top: 0.75rem;
+    }
+
+    .insight-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.35rem;
+    }
+
+    .insight-text { font-size: 0.875rem; color: var(--gold); line-height: 1.6; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .kpi-row  { grid-template-columns: repeat(2, 1fr); }
+      .grid-2   { grid-template-columns: 1fr; }
+      .grid-3   { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+      body   { padding: 1.25rem 1rem 3rem; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-left">
+    <h1>MoneyGoose <span>× EAGLE</span></h1>
+    <p class="tagline">ビジネス全体像 — 2026年3月現在</p>
+  </div>
+  <div class="header-right">
+    <div id="current-date"></div>
+    <a class="nav-link" href="index.html">← Dashboard</a>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ── KPI ── -->
+  <div>
+    <div class="section-heading">主要KPI</div>
+    <div class="kpi-row">
+
+      <div class="kpi-box">
+        <div class="kpi-label">MRR（EAGLE）</div>
+        <div class="kpi-value kpi-gold">¥250万</div>
+        <div class="kpi-sub">2026年3月時点</div>
+      </div>
+
+      <div class="kpi-box">
+        <div class="kpi-label">EAGLEサブスク会員</div>
+        <div class="kpi-value kpi-cyan">78〜80人</div>
+        <div class="kpi-sub">有料プランのみ</div>
+      </div>
+
+      <div class="kpi-box">
+        <div class="kpi-label">MoneyGooseメンバー</div>
+        <div class="kpi-value kpi-green">250人</div>
+        <div class="kpi-sub">一生サポート</div>
+      </div>
+
+      <div class="kpi-box">
+        <div class="kpi-label">ダウングレード率</div>
+        <div class="kpi-value kpi-purple">ほぼ0</div>
+        <div class="kpi-sub">高い継続率</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── EAGLE プラン ── -->
+  <div>
+    <div class="section-heading">EAGLE プラン別収益（2026年3月）</div>
+    <div class="card accent-cyan">
+      <div class="card-label">サブスクリプション構造</div>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>プラン</th>
+            <th>月額</th>
+            <th>出品数上限</th>
+            <th>加入者数</th>
+            <th>月次売上</th>
+            <th>ステータス</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="plan-name">トライ（無料）</span></td>
+            <td class="plan-price">¥0</td>
+            <td>100商品</td>
+            <td class="plan-members">170人前後</td>
+            <td>—</td>
+            <td><span class="badge badge-free">Free</span></td>
+          </tr>
+          <tr>
+            <td><span class="plan-name">BASIC</span></td>
+            <td class="plan-price">¥10,000</td>
+            <td>1,000商品</td>
+            <td class="plan-members">30人</td>
+            <td class="plan-revenue">¥272,700</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td><span class="plan-name">MIDDLE</span></td>
+            <td class="plan-price">¥30,000</td>
+            <td>5,000商品</td>
+            <td class="plan-members">25人</td>
+            <td class="plan-revenue">¥681,800</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td><span class="plan-name">VIP</span></td>
+            <td class="plan-price">¥50,000</td>
+            <td>1万商品</td>
+            <td class="plan-members">16人</td>
+            <td class="plan-revenue">¥727,264</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td><span class="plan-name">ROYAL 6.5</span></td>
+            <td class="plan-price">¥65,000</td>
+            <td>2万商品</td>
+            <td class="plan-members">1人</td>
+            <td class="plan-revenue">¥59,090</td>
+            <td><span class="badge badge-top">Top</span></td>
+          </tr>
+          <tr>
+            <td><span class="plan-name">ROYAL 8</span></td>
+            <td class="plan-price">¥80,000</td>
+            <td>3万商品</td>
+            <td class="plan-members">5人</td>
+            <td class="plan-revenue">¥363,635</td>
+            <td><span class="badge badge-top">Top</span></td>
+          </tr>
+          <tr>
+            <td><span class="plan-name">MAX</span></td>
+            <td class="plan-price">¥100,000</td>
+            <td>5万商品</td>
+            <td class="plan-members">1人</td>
+            <td class="plan-revenue">¥90,909</td>
+            <td><span class="badge badge-top">Top</span></td>
+          </tr>
+          <tr class="plan-total">
+            <td colspan="3"><strong>合計</strong></td>
+            <td class="plan-members"><strong>78〜80人</strong></td>
+            <td class="plan-revenue"><strong>¥2,195,398</strong></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="insight-box">
+        <div class="insight-label">構造上の強み</div>
+        <div class="insight-text">アップグレードは面談による許可制（押し売りなし）→ ダウングレードほぼゼロ。顧客が成功するにつれて自然にプランが上がる理想的な設計。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ビジネス構造 ── -->
+  <div>
+    <div class="section-heading">ビジネス構造</div>
+    <div class="grid-2">
+
+      <!-- MoneyGoose -->
+      <div class="card accent-gold">
+        <div class="card-label">MoneyGoose — コミュニティ</div>
+        <div class="info-list">
+          <div class="info-item">
+            <div class="info-dot dot-gold"></div>
+            <div>総メンバー数：<strong>250人</strong></div>
+          </div>
+          <div class="info-item">
+            <div class="info-dot dot-gold"></div>
+            <div>入会後は<strong>一生サポート</strong>（他スクールの6ヶ月/1年と差別化）</div>
+          </div>
+          <div class="info-item">
+            <div class="info-dot dot-gold"></div>
+            <div>新規流入：既存メンバーの紹介 + JV（友人スクール運営者）</div>
+          </div>
+          <div class="info-item">
+            <div class="info-dot dot-gold"></div>
+            <div>JV報酬：成約の<strong>30%</strong>（EAGLEサブスクには紹介料なし）</div>
+          </div>
+          <div class="info-item">
+            <div class="info-dot dot-gold"></div>
+            <div>月2回の<strong>個人面談</strong>を全メンバーに提供</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EAGLE -->
+      <div class="card accent-cyan">
+        <div class="card-label">EAGLE — 自動化ツール</div>
+        <div class="info-list">
+          <div class="info-item">
+            <div class="info-dot dot-cyan"></div>
+            <div>メルカリ・ヤフオク・Amazonの在庫を監視し<strong>eBayへ無在庫出品</strong></div>
+          </div>
+          <div class="info-item">
+            <div class="info-dot dot-cyan"></div>
+            <div>MoneyGooseノウハウ専用設計 → <strong>参入障壁</strong>として機能</div>
+          </div>
+          <div class="info-item">
+            <div class="info-dot dot-cyan"></div>
+            <div>他者が真似しにくい設計が差別化ポイント</div>
+          </div>
+          <div class="info-item">
+            <div class="info-dot dot-cyan"></div>
+            <div>コミュニティとツールが<strong>相互に強化</strong>する二重構造</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 転換タイムライン ── -->
+  <div>
+    <div class="section-heading">トライ → 有料プランへの転換</div>
+    <div class="card accent-purple">
+      <div class="card-label">典型的な移行パターン</div>
+      <div class="timeline">
+        <div class="tl-item tl-cyan">
+          <div class="tl-label">早期成功者</div>
+          <div class="tl-text">2ヶ月でBASIC転換 → 翌月にMIDDLEへ移行するケースも</div>
+        </div>
+        <div class="tl-item tl-gold">
+          <div class="tl-label">平均ペース</div>
+          <div class="tl-text">トライ開始から<strong>3ヶ月</strong>でBASICへ転換（段階を飛ばさずステップアップ）</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-label">ゆっくり組</div>
+          <div class="tl-text">最大1年かけてBASICへ転換。その後も継続率は高い</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 運営体制 ── -->
+  <div>
+    <div class="section-heading">運営体制</div>
+    <div class="grid-3">
+
+      <div class="card accent-gold">
+        <div class="card-label">オーナー</div>
+        <div class="person-card">
+          <div class="person-name">中村 大祐</div>
+          <div class="person-role">オーナー・全体戦略</div>
+          <div class="info-list">
+            <div class="info-item">
+              <div class="info-dot dot-gold"></div>
+              <div>事業設計・意思決定・新展開</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card accent-cyan">
+        <div class="card-label">メイン講師</div>
+        <div class="person-card">
+          <div class="person-name">中井さん</div>
+          <div class="person-role">eBayノウハウの核</div>
+          <div class="info-list">
+            <div class="info-item">
+              <div class="info-dot dot-cyan"></div>
+              <div>スクール売上を<strong>50%折半</strong></div>
+            </div>
+            <div class="info-item">
+              <div class="info-dot dot-cyan"></div>
+              <div>コンテンツ品質の核</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card accent-purple">
+        <div class="card-label">サポート講師</div>
+        <div class="person-card">
+          <div class="person-name">椛島（かばしま）さん</div>
+          <div class="person-role">サポート講師</div>
+          <div class="info-list">
+            <div class="info-item">
+              <div class="info-dot dot-purple"></div>
+              <div>月額<strong>10万円</strong> + 面談時給</div>
+            </div>
+            <div class="info-item">
+              <div class="info-dot dot-purple"></div>
+              <div>EAGLE使用料<strong>無料</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 講師獲得モデル ── -->
+  <div>
+    <div class="section-heading">講師獲得モデル（重要な仕組み）</div>
+    <div class="card accent-green">
+      <div class="card-label">キャッシュアウトゼロで高価値オファーを実現</div>
+      <div class="info-list">
+        <div class="info-item">
+          <div class="info-dot dot-green"></div>
+          <div>EAGLE使用料無料をオファーとして既存の<strong>成功メンバーをサポート講師化</strong></div>
+        </div>
+        <div class="info-item">
+          <div class="info-dot dot-green"></div>
+          <div>キャッシュアウトなし（機会費用のみ）で高い報酬価値を提供</div>
+        </div>
+        <div class="info-item">
+          <div class="info-dot dot-green"></div>
+          <div>成功体験を持つメンバーが講師になるため<strong>教育コストが低く品質が高い</strong></div>
+        </div>
+      </div>
+      <div class="insight-box">
+        <div class="insight-label">スケール戦略</div>
+        <div class="insight-text">面談キャパ（講師数）がボトルネック。EAGLEで成功した内部メンバーを講師に育成することで、このボトルネックを解消しながら品質を維持できる。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 成長戦略 ── -->
+  <div>
+    <div class="section-heading">成長戦略・課題</div>
+    <div class="grid-2">
+
+      <div class="card accent-gold">
+        <div class="card-label">成長レバー</div>
+        <div class="info-list">
+          <div class="info-item">
+            <div class="info-dot dot-gold"></div>
+            <div><strong>JV拡大</strong>：友人スクール運営者との連携を増やす</div>
+          </div>
+          <div class="info-item">
+            <div class="info-dot dot-gold"></div>
+            <div><strong>stand.fm</strong>：新規認知獲得チャネル</div>
+          </div>
+          <div class="info-item">
+            <div class="info-dot dot-gold"></div>
+            <div><strong>内部講師育成</strong>：EAGLEで成功したメンバーを講師化</div>
+          </div>
+          <div class="info-item">
+            <div class="info-dot dot-gold"></div>
+            <div><strong>AI活用</strong>：フロント（集客・コンテンツ）を自動化</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card accent-purple">
+        <div class="card-label">課題・ボトルネック</div>
+        <div class="alert-box">
+          <div class="alert-label">ボトルネック</div>
+          <div class="alert-text">面談キャパ（講師数が上限を決める）<br>→ メンバーが増えても講師が増えないと品質維持できない</div>
+        </div>
+        <div class="strategy-box">
+          <div class="strategy-title">解決アプローチ</div>
+          <div class="info-list">
+            <div class="info-item">
+              <div class="info-dot dot-purple"></div>
+              <div>AI活用でフロント業務を自動化 → 面談は人間が担う構造に集中</div>
+            </div>
+            <div class="info-item">
+              <div class="info-dot dot-purple"></div>
+              <div>成功メンバーを順次サポート講師化してキャパ拡大</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /.layout -->
+
+<script>
+  const dateEl = document.getElementById('current-date');
+  const now = new Date();
+  const days = ['日','月','火','水','木','金','土'];
+  dateEl.textContent = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（${days[now.getDay()]}）`;
+</script>
+
+</body>
+</html>
